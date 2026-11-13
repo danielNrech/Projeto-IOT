@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monitor de Ambiente</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topo">
+  <div class="marca">
+    <span class="logo">◈</span>
+    <h1>Monitor de Ambiente</h1>
+    <span id="modo" class="chip">conectando</span>
+  </div>
+  <div class="controles">
+    <div class="grupo" id="faixas">
+      <button data-min="5">5 min</button>
+      <button data-min="15" class="ativo">15 min</button>
+      <button data-min="60">1 h</button>
+      <button data-min="0">Tudo</button>
+    </div>
+    <span id="atualizado" class="mudo">--:--:--</span>
+  </div>
+</header>
+
+<div id="banner" class="banner oculto">
+  <span class="sirene">⚠</span>
+  <span id="banner-texto"></span>
+</div>
+
+<main>
+
+  <section class="secao">
+    <button class="secao-titulo"><span class="seta">⌄</span> Visão geral</button>
+    <div class="grade">
+
+      <div class="painel s3" id="p-temp">
+        <div class="painel-titulo">Temperatura <span class="lim" id="lim-temp">limite --</span></div>
+        <div class="stat laranja">
+          <canvas class="spark" id="sp-temp"></canvas>
+          <div class="valor"><span id="v-temp">--</span><small>°C</small></div>
+        </div>
+      </div>
+
+      <div class="painel s3" id="p-umid">
+        <div class="painel-titulo">Umidade <span class="lim" id="lim-umid">limite --</span></div>
+        <div class="stat azul">
+          <canvas class="spark" id="sp-umid"></canvas>
+          <div class="valor"><span id="v-umid">--</span><small>%</small></div>
+        </div>
+      </div>
+
+      <div class="painel s3" id="p-luz">
+        <div class="painel-titulo">Luminosidade <span class="lim">0 a 100</span></div>
+        <div class="stat roxo">
+          <canvas class="spark" id="sp-luz"></canvas>
+          <div class="valor"><span id="v-luz">--</span><small>%</small></div>
+        </div>
+      </div>
+
+      <div class="painel s3" id="p-estado">
+        <div class="painel-titulo">Estado do alerta <span class="lim" id="sub-estado">buzzer desligado</span></div>
+        <div class="stat verde" id="st-estado">
+          <div class="valor"><span id="v-estado">NORMAL</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="secao">
+    <button class="secao-titulo"><span class="seta">⌄</span> Histórico e configuração</button>
+    <div class="grade">
+
+      <div class="painel s8">
+        <div class="painel-titulo">Temperatura ao longo do tempo <span class="dica">°C · tracejado = limite</span></div>
+        <div class="grafico"><canvas id="g-temp"></canvas><div class="tip oculto"></div></div>
+        <div class="legenda" id="l-temp"></div>
+      </div>
+
+      <div class="painel s4">
+        <div class="painel-titulo">Configuração de limites</div>
+        <div class="config">
+          <div class="campo">
+            <label for="in-temp">Temperatura máxima</label>
+            <div class="linha">
+              <input type="range" id="rg-temp" min="0" max="50" step="0.5" value="30">
+              <div class="num"><input type="number" id="in-temp" min="0" max="50" step="0.5" value="30"><span>°C</span></div>
+            </div>
+          </div>
+          <div class="campo">
+            <label for="in-umid">Umidade máxima</label>
+            <div class="linha">
+              <input type="range" id="rg-umid" min="0" max="100" step="1" value="70">
+              <div class="num"><input type="number" id="in-umid" min="0" max="100" step="1" value="70"><span>%</span></div>
+            </div>
+          </div>
+          <div class="origem" id="origem">Em vigor: -- · última alteração: --</div>
+          <div class="acoes">
+            <button id="aplicar" class="btn primario" disabled>Aplicar limites</button>
+            <button id="restaurar" class="btn" disabled>Restaurar</button>
+            <span id="msg" class="mudo"></span>
+          </div>
+          <p class="nota">Vale sempre a alteração mais recente, feita pelo potenciômetro ou por este site. Quando o valor passa do limite, o buzzer toca a cada 3 segundos e o painel acende.</p>
+        </div>
+      </div>
+
+      <div class="painel s6">
+        <div class="painel-titulo">Umidade ao longo do tempo <span class="dica">% · tracejado = limite</span></div>
+        <div class="grafico"><canvas id="g-umid"></canvas><div class="tip oculto"></div></div>
+        <div class="legenda" id="l-umid"></div>
+      </div>
+
+      <div class="painel s6">
+        <div class="painel-titulo">Luminosidade ao longo do tempo <span class="dica">%</span></div>
+        <div class="grafico"><canvas id="g-luz"></canvas><div class="tip oculto"></div></div>
+        <div class="legenda" id="l-luz"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="secao">
+    <button class="secao-titulo"><span class="seta">⌄</span> Análise</button>
+    <div class="grade">
+
+      <div class="painel s5">
+        <div class="painel-titulo">Picos no período</div>
+        <table class="tabela">
+          <thead>
+            <tr><th>Medida</th><th>Mín</th><th>Média</th><th>Máx</th><th>Pico às</th></tr>
+          </thead>
+          <tbody id="picos"></tbody>
+        </table>
+      </div>
+
+      <div class="painel s7">
+        <div class="painel-titulo">Eventos de alerta</div>
+        <div class="eventos" id="eventos"></div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
